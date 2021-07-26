@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:foode/Screens/Login.dart';
 
@@ -5,7 +6,11 @@ import 'Screens/Homepage.dart';
 import 'Screens/SignUp.dart';
 import 'Screens/Start.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key key}) : super(key: key);
@@ -15,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Colors.purpleAccent,
+        primaryColor: Colors.blueGrey,
       ),
       home: Homepage(),
       routes: <String, WidgetBuilder>{

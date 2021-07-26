@@ -3,29 +3,27 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Homepage extends StatefulWidget {
-  const Homepage({Key key}) : super(key: key);
-
   @override
   _HomepageState createState() => _HomepageState();
 }
 
 class _HomepageState extends State<Homepage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseUser user;
+  User user;
   bool isloggedin = false;
 
   checkAuthentication() async {
-    _auth.onAuthStateChanged.listen((user) {
+    _auth.authStateChanges().listen((user) {
       if (user == null) {
-        Navigator.pushReplacementNamed(context, "start");
+        Navigator.of(context).pushReplacementNamed("start");
       }
     });
   }
 
   getUser() async {
-    FirebaseUser firebaseUser = await _auth.currentUser();
+    User firebaseUser = _auth.currentUser;
     await firebaseUser?.reload();
-    firebaseUser = await _auth.currentUser();
+    firebaseUser = _auth.currentUser;
     if (firebaseUser != null) {
       setState(() {
         this.user = firebaseUser;
@@ -42,6 +40,7 @@ class _HomepageState extends State<Homepage> {
   void initState() {
     super.initState();
     this.checkAuthentication();
+    this.getUser();
   }
 
   @override
@@ -52,36 +51,36 @@ class _HomepageState extends State<Homepage> {
           child: !isloggedin
               ? CircularProgressIndicator()
               : Column(
-                  children: [
-                    Container(
-                      height: 400,
-                      child: Image(
-                        image: AssetImage("assets/1.jpg"),
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    Container(
-                      child: Text(
-                        "Hello ${user.displayName} you are Logged in as ${user.email}",
-                        style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    RaisedButton(
-                      padding: EdgeInsets.fromLTRB(70, 10, 70, 10),
-                      onPressed: signOut,
-                      child: Text('SignOut',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold)),
-                      color: Colors.orange,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                    )
-                  ],
-                )),
+            children: [
+              Container(
+                height: 400,
+                child: Image(
+                  image: AssetImage("assets/1.jpg"),
+                  fit: BoxFit.contain,
+                ),
+              ),
+              Container(
+                child: Text(
+                  "Hello ${user.displayName} you are Logged in as ${user.email}",
+                  style: TextStyle(
+                      fontSize: 20.0, fontWeight: FontWeight.bold),
+                ),
+              ),
+              RaisedButton(
+                padding: EdgeInsets.fromLTRB(70, 10, 70, 10),
+                onPressed: signOut,
+                child: Text('SignOut',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold)),
+                color: Colors.orange,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+              )
+            ],
+          )),
     );
   }
 }
